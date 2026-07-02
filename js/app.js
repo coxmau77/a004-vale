@@ -1,18 +1,6 @@
-import { appConfig } from "../src/core/config.js";
+import { PlayerState } from "../src/core/state.js";
 
 let audioCtx = null;
-let currentIndex = 0;
-
-function buildProgressBar() {
-  const container = document.getElementById("progress-container");
-  container.innerHTML = "";
-  appConfig.content.forEach((_, i) => {
-    const seg = document.createElement("div");
-    seg.className = "progress-segment";
-    if (i === 0) seg.classList.add("active");
-    container.appendChild(seg);
-  });
-}
 
 function initAudioContext() {
   try {
@@ -24,7 +12,7 @@ function initAudioContext() {
   }
 }
 
-async function unlockApp() {
+async function unlockApp(state) {
   try {
     await document.documentElement.requestFullscreen();
   } catch {
@@ -50,10 +38,14 @@ async function unlockApp() {
       window.close();
     }
   });
+
+  state.render(0);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  buildProgressBar();
+  const state = new PlayerState();
+  state.init();
+
   initAudioContext();
 
   const splash = document.getElementById("splash-screen");
@@ -64,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     btn.removeEventListener("click", handleEnter);
     btn.removeEventListener("touchstart", handleEnter);
-    unlockApp();
+    unlockApp(state);
   };
 
   btn.addEventListener("click", handleEnter);
