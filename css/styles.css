@@ -8,11 +8,11 @@
 
 :root {
   /* --brand-color: oklch(0.61 0.22 1.81); */
-  --brand-color: oklch(87.791% 0.18629 113.661);
+  --brand-color: oklch(52.023% 0.24807 295.946);
   --bg-dark: color-mix(in oklch, var(--brand-color) 10%, black);
   --text-light: color-mix(in oklch, var(--brand-color) 10%, white);
   --text-muted: color-mix(in oklch, var(--text-light) 60%, black);
-  --progress-bar-bg: color-mix(in oklch, var(--text-light) 20%, transparent);
+  --progress-bar-bg: color-mix(in oklch, var(--text-light) 15%, transparent);
   --progress-bar-active: var(--brand-color);
   --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -63,14 +63,14 @@ body {
   left: 0;
   right: 0;
   display: flex;
-  gap: 2px;
+  gap: 8px;
   padding: 0.5rem;
   z-index: 3;
 }
 
 #progress-container .progress-segment {
   flex: 1;
-  height: 3px;
+  height: 8px;
   border-radius: 2px;
   background: var(--progress-bar-bg);
   transition: background 0.3s var(--timing-function);
