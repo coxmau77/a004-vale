@@ -10,6 +10,7 @@ export class PlayerState {
     this.transitionTimer = null;
     this.mediaContainer = document.getElementById("media-container");
     this.effectsContainer = document.getElementById("effects-canvas");
+    this.loader = document.getElementById("loader");
     this.currentElement = null;
     this.onScreenElement = null;
   }
@@ -71,6 +72,8 @@ export class PlayerState {
 
     const startTransition = () => {
       if (this.currentElement !== newElement) return;
+
+      this.loader?.classList.add("hidden");
 
       const toRemove = this.onScreenElement;
 
