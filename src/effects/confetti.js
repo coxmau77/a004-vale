@@ -76,7 +76,7 @@ function triggerBurst(container, x, y) {
     // Animación con 3 puntos clave: origen → arco → caída + desvanecer
     p.animate(
       [
-        { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+        { transform: "translate(0,0) rotate(0deg)", opacity: 0.8 },
         {
           transform: `translate(${vx * 0.6}px,${vy * 0.6}px) rotate(${rotation * 0.5}deg)`,
           opacity: 0.8,
