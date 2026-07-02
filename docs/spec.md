@@ -93,10 +93,9 @@ animame.ar/
 │   │   └── config.js          # Objeto appConfig
 │   │
 │   ├── effects/               # Módulos del motor de efectos
-│   │   ├── rain.js            # Lógica de partículas de lluvia
-│   │   ├── rain.css           # Física y @keyframes de lluvia
-│   │   ├── confetti.js        # Lógica de partículas de confeti
-│   │   └── confetti.css       # @keyframes acelerados de confeti
+│   │   ├── index.js           # EffectsManager (registro + ciclo de vida)
+│   │   ├── rain.js            # Lluvia (lógica + inyección CSS vía injectCSS)
+│   │   ├── confetti.js        # Confeti (lógica + inyección CSS vía injectCSS)
 │   │
 │   └── ui/                    # Componentes de interacción
 │       ├── progress.js        # Barra de progreso fraccionada
@@ -165,7 +164,7 @@ Prohibido el recalculo de estilos o inserción iterativa directa en el DOM princ
 
 #### 7.2 Inyección y Enlace de Estilos
 
-Cada partícula recibe parámetros dinámicos mediante variables CSS aleatorias (`--p-delay`, `--p-x`, `--p-scale`). El fragmento completo se inserta en una transacción atómica en el contenedor del DOM.
+Cada módulo de efecto inyecta su propia hoja de estilos vía `<style data-effect-css="...">` en `<head>` la primera vez que se activa (función `injectCSS()`). Las partículas reciben parámetros dinámicos mediante propiedades de estilo directas (posición, delay, duración, opacidad). El fragmento completo se inserta en una transacción atómica en el contenedor del DOM.
 
 #### 7.3 Delegación de Física a GPU
 
@@ -173,7 +172,7 @@ Toda la lógica transicional (gravedad, turbulencia, rotación, opacidad, despla
 
 #### 7.4 Recolección Automática
 
-Cada partícula escucha `animationend` o `transitionend`. Al completar su ciclo de vida, ejecuta `element.remove()` para liberar memoria.
+Para efectos continuos (loop infinito), la limpieza se delega al `cleanup` del módulo (`container.replaceChildren()`) cuando el motor cambia o detiene el efecto. Efectos de tipo ráfaga podrían usar `animationend` para autodestrucción por partícula.
 
 #### 7.5 Efecto Inválido
 
@@ -287,12 +286,13 @@ La aplicación está diseñada exclusivamente para interacción táctil en dispo
 - Transición crossfade entre slides (0.5s, GPU-accelerada).
 - **Criterio:** La app carga y muestra el primer slide inmediatamente, responsive, centrado a max 720px, con transiciones suaves entre slides sin parpadeos ni cortes.
 
-#### Hito 2: Motor de Efectos y Lazy Loading
-- Módulo genérico de efectos basado en `DocumentFragment`.
+#### Hito 2: Motor de Efectos y Precarga ✅
+- Módulo genérico de efectos basado en `DocumentFragment` con inyección CSS dinámica.
 - Efecto lluvia (rain) con física CSS.
 - Efecto confeti (confetti) con física CSS.
-- Precarga N+1 y lazy loading nativo.
-- **Criterio:** Efectos visuales superpuestos sin degradación de FPS. Precarga funcional.
+- Integración del EffectsManager en `PlayerState.render()` y `PlayerState.destroy()`.
+- Precarga N+1 y N+2 en memoria.
+- **Criterio:** Efectos visuales superpuestos sin degradación de FPS. Precarga funcional. Efecto inválido se omite sin error.
 
 #### Hito 3: Audio Dual y Afinación de Performance
 - Integración de Web Audio API con bucles ambientales (requiere interacción del usuario para activación).

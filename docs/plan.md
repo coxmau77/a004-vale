@@ -38,16 +38,16 @@ Rama única: `main`
 | 12 | `feat: loop infinito al final del array` | `state.js` |
 | 13 | `feat: manejo centralizado de errores` | `state.js`, `css/styles.css` |
 
-## Hito 3: Motor de Efectos y Precarga
+## ~~Hito 3: Motor de Efectos y Precarga~~ ✅
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
-| 14 | `feat: motor de efectos genérico` | `src/effects/` (base) |
-| 15 | `feat: efecto de lluvia` | `src/effects/rain.js`, `src/effects/rain.css` |
-| 16 | `feat: efecto de confeti` | `src/effects/confetti.js`, `src/effects/confetti.css` |
-| 17 | `feat: precarga N+1 y lazy loading` | `state.js` |
+| 14 | ~~`feat: motor de efectos genérico`~~ | ~~`src/effects/index.js`~~ |
+| 15 | ~~`feat: efecto de lluvia`~~ | ~~`src/effects/rain.js`~~ |
+| 16 | ~~`feat: efecto de confeti`~~ | ~~`src/effects/confetti.js`~~ |
+| 17 | ~~`feat: precarga N+1 y lazy loading`~~ | ~~`state.js`~~ |
 
-## Hito 4: Audio y Performance
+## Hito 4: Audio, Performance y reduced-motion
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
@@ -71,7 +71,7 @@ Rama única: `main`
 - Navegación completa cíclica entre slides sin interrupción.
 - Errores de red/medio no rompen el flujo.
 
-### Hito 3
+### Hito 3 ✅
 - Efectos visuales superpuestos sin degradación de FPS.
 - Precarga N+1 funcional.
 - Efecto inválido se omite sin error.

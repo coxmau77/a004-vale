@@ -3,8 +3,9 @@ export const appConfig = {
     slideDuration: 5000,
     targetFps: 60,
     enableSwipe: true,
-    baseColor: "oklch(55% 0.22 260)",
+    baseColor: "oklch(0.61 0.22 1.81)",
   },
+  effect: { name: "confetti", intensity: 70 },
   content: [
     {
       id: 1,

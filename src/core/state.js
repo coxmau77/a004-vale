@@ -1,6 +1,6 @@
 import { appConfig } from "./config.js";
 import { updateProgress } from "../ui/progress.js";
-import { initControls } from "../ui/controls.js";
+import { startEffect, stopEffect } from "../effects/index.js";
 
 export class PlayerState {
   constructor() {
@@ -9,12 +9,13 @@ export class PlayerState {
     this.timer = null;
     this.transitionTimer = null;
     this.mediaContainer = document.getElementById("media-container");
+    this.effectsContainer = document.getElementById("effects-canvas");
     this.currentElement = null;
   }
 
   init() {
     this.buildProgressBar();
-    initControls(() => this.prev(), () => this.next());
+    startEffect(this.effectsContainer, this.config.effect);
   }
 
   buildProgressBar() {
@@ -24,6 +25,7 @@ export class PlayerState {
       const seg = document.createElement("div");
       seg.className = "progress-segment";
       if (i === 0) seg.classList.add("active");
+      seg.addEventListener("click", () => this.render(i));
       container.appendChild(seg);
     });
   }
@@ -134,19 +136,14 @@ export class PlayerState {
     this.render(nextIndex);
   }
 
-  prev() {
-    const prevIndex =
-      (this.currentIndex - 1 + this.config.content.length) %
-      this.config.content.length;
-    this.render(prevIndex);
-  }
-
   preloadNext() {
-    const nextIndex = (this.currentIndex + 1) % this.config.content.length;
-    const nextSlide = this.config.content[nextIndex];
-    if (nextSlide.type === "image") {
-      const img = new Image();
-      img.src = nextSlide.src;
+    for (let i = 1; i <= 2; i++) {
+      const idx = (this.currentIndex + i) % this.config.content.length;
+      const slide = this.config.content[idx];
+      if (slide.type === "image") {
+        const img = new Image();
+        img.src = slide.src;
+      }
     }
   }
 
@@ -165,5 +162,6 @@ export class PlayerState {
       this.currentElement.onended = null;
       this.currentElement = null;
     }
+    stopEffect();
   }
 }

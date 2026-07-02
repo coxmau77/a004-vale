@@ -7,7 +7,7 @@
 }
 
 :root {
-  --brand-color: oklch(55% 0.22 260);
+  --brand-color: oklch(0.61 0.22 1.81);
   --bg-dark: color-mix(in oklch, var(--brand-color) 10%, black);
   --text-light: color-mix(in oklch, var(--brand-color) 10%, white);
   --text-muted: color-mix(in oklch, var(--text-light) 60%, black);
@@ -76,28 +76,6 @@ html, body {
 
 #progress-container .progress-segment.active {
   background: var(--progress-bar-active);
-}
-
-/* --- Touch Controls --- */
-
-.touch-zone {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
-  z-index: 4;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-#touch-prev {
-  left: 0;
-}
-
-#touch-next {
-  right: 0;
 }
 
 /* --- Media --- */
