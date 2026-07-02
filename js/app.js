@@ -13,6 +13,12 @@ function initAudioContext() {
 }
 
 async function unlockApp(state) {
+  const splash = document.getElementById("splash-screen");
+  const container = document.getElementById("app-container");
+
+  splash.close();
+  container.hidden = false;
+
   try {
     await document.documentElement.requestFullscreen();
   } catch {
@@ -26,12 +32,6 @@ async function unlockApp(state) {
       console.warn("AudioContext no pudo reanudarse");
     }
   }
-
-  const splash = document.getElementById("splash-screen");
-  const container = document.getElementById("app-container");
-
-  splash.close();
-  container.hidden = false;
 
   document.addEventListener("fullscreenchange", () => {
     if (!document.fullscreenElement) {
