@@ -11,6 +11,7 @@ export class PlayerState {
     this.mediaContainer = document.getElementById("media-container");
     this.effectsContainer = document.getElementById("effects-canvas");
     this.currentElement = null;
+    this.onScreenElement = null;
   }
 
   init() {
@@ -49,16 +50,9 @@ export class PlayerState {
     const oldElement = this.currentElement;
 
     for (const el of this.mediaContainer.children) {
-      if (el !== oldElement) {
+      if (el !== oldElement && el !== this.onScreenElement) {
         el.remove();
       }
-    }
-
-    if (oldElement) {
-      oldElement.onerror = null;
-      oldElement.onabort = null;
-      oldElement.onended = null;
-      oldElement.style.opacity = "0";
     }
 
     this.currentIndex = index;
@@ -75,26 +69,60 @@ export class PlayerState {
     this.mediaContainer.appendChild(newElement);
     this.currentElement = newElement;
 
-    getComputedStyle(newElement).opacity;
-    newElement.style.opacity = "1";
+    const startTransition = () => {
+      if (this.currentElement !== newElement) return;
 
-    this.transitionTimer = setTimeout(() => {
-      if (oldElement && oldElement.parentNode) {
-        oldElement.remove();
+      const toRemove = this.onScreenElement;
+
+      if (toRemove) {
+        toRemove.style.opacity = "0";
       }
-      this.transitionTimer = null;
-    }, 500);
 
-    updateProgress(this.currentIndex);
-    this.preloadNext();
+      getComputedStyle(newElement).opacity;
+      newElement.style.opacity = "1";
 
-    if (slide.type === "image") {
-      this.timer = setTimeout(
-        () => this.next(),
-        this.config.settings.slideDuration
+      this.onScreenElement = newElement;
+
+      for (const el of this.mediaContainer.children) {
+        if (el !== newElement && el !== toRemove) {
+          el.remove();
+        }
+      }
+
+      this.transitionTimer = setTimeout(() => {
+        if (toRemove && toRemove.parentNode) {
+          toRemove.remove();
+        }
+        this.transitionTimer = null;
+      }, 500);
+
+      updateProgress(this.currentIndex);
+      this.preloadNext();
+
+      if (slide.type === "image") {
+        this.timer = setTimeout(
+          () => this.next(),
+          this.config.settings.slideDuration
+        );
+      } else {
+        newElement.play().catch(() => this.next());
+      }
+    };
+
+    if (slide.type === "image" && newElement.complete) {
+      startTransition();
+    } else if (slide.type === "image") {
+      newElement.addEventListener("load", startTransition, { once: true });
+      newElement.addEventListener(
+        "error",
+        () => {
+          console.warn(`Error cargando imagen: ${slide.src}`);
+          startTransition();
+        },
+        { once: true }
       );
     } else {
-      newElement.play().catch(() => this.next());
+      startTransition();
     }
   }
 
