@@ -7,7 +7,8 @@
 }
 
 :root {
-  --brand-color: oklch(0.61 0.22 1.81);
+  /* --brand-color: oklch(0.61 0.22 1.81); */
+  --brand-color: oklch(87.791% 0.18629 113.661);
   --bg-dark: color-mix(in oklch, var(--brand-color) 10%, black);
   --text-light: color-mix(in oklch, var(--brand-color) 10%, white);
   --text-muted: color-mix(in oklch, var(--text-light) 60%, black);
@@ -19,7 +20,8 @@
   color: var(--text-light);
 }
 
-html, body {
+html,
+body {
   overflow: hidden;
   height: 100dvh;
   width: 100dvw;
@@ -93,6 +95,7 @@ html, body {
 /* --- Reduced Motion --- */
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

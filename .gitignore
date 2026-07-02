@@ -9,8 +9,7 @@ Thumbs.db
 .idea/
 *.sublime-*
 
-# Netlify
-netlify.toml
+# Netlify local (committed netlify.toml is for CI build)
 
 # Logs
 *.log

@@ -115,7 +115,7 @@ function onPointer(e, container) {
 export function start(container, config) {
   injectCSS();
 
-  const count = config.intensity || 120;
+  const count = config.intensity || 100;
   const fragment = document.createDocumentFragment();
 
   for (let i = 0; i < count; i++) {
@@ -135,8 +135,8 @@ export function start(container, config) {
       `background: hsl(${hue}, ${saturation}%, ${light}%)`,
       `border-radius: ${Math.random() > 0.5 ? "2px" : "0"}`,
       `animation-delay: ${Math.random() * 2}s`,
-      `animation-duration: ${3 + Math.random() * 3}s`,
-      `opacity: ${0.85 + Math.random() * 0.15}`,
+      `animation-duration: ${3 + Math.random() * 4}s`,
+      `opacity: ${0.15 + Math.random() * 0.85}`,
     ].join(";");
 
     fragment.appendChild(particle);
