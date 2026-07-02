@@ -1,0 +1,16 @@
+# OS
+Thumbs.db
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Netlify
+netlify.toml
+
+# Logs
+*.log
