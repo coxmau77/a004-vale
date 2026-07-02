@@ -1,6 +1,6 @@
 import { appConfig } from "./config.js";
 import { updateProgress } from "../ui/progress.js";
-import { startEffect, stopEffect } from "../effects/index.js";
+import { startEffect, stopEffect, handlePointer } from "../effects/index.js";
 
 export class PlayerState {
   constructor() {
@@ -16,6 +16,12 @@ export class PlayerState {
   init() {
     this.buildProgressBar();
     startEffect(this.effectsContainer, this.config.effect);
+
+    const app = document.getElementById("app-container");
+    app.addEventListener("click", (e) => {
+      if (e.target.closest("#progress-container")) return;
+      handlePointer(e, this.effectsContainer);
+    });
   }
 
   buildProgressBar() {

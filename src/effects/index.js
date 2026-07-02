@@ -3,6 +3,7 @@ import { start as confetti } from "./confetti.js";
 
 const registry = { rain, confetti };
 let cleanup = null;
+let pointerHandler = null;
 
 export function startEffect(container, config) {
   stopEffect();
@@ -17,6 +18,13 @@ export function startEffect(container, config) {
 
   const result = module(container, config);
   cleanup = result.cleanup || null;
+  pointerHandler = result.onPointer || null;
+}
+
+export function handlePointer(e, container) {
+  if (pointerHandler) {
+    pointerHandler(e, container);
+  }
 }
 
 export function stopEffect() {
@@ -24,4 +32,5 @@ export function stopEffect() {
     cleanup();
     cleanup = null;
   }
+  pointerHandler = null;
 }

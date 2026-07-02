@@ -1,4 +1,5 @@
 const CSS_ID = "opencode-effects-confetti";
+const hues = [0, 15, 30, 45, 60, 120, 180, 200, 240, 280, 300, 330];
 
 function injectCSS() {
   if (document.querySelector(`[data-effect-css="${CSS_ID}"]`)) return;
@@ -27,7 +28,61 @@ function injectCSS() {
   document.head.appendChild(style);
 }
 
-const hues = [0, 15, 30, 45, 60, 120, 180, 200, 240, 280, 300, 330];
+function triggerBurst(container, x, y) {
+  const count = 25;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    const w = 4 + Math.random() * 4;
+    const h = 4 + Math.random() * 4;
+    const hue = hues[Math.floor(Math.random() * hues.length)];
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 60 + Math.random() * 120;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed - 80;
+    const rotation = Math.random() * 720 - 360;
+
+    p.style.cssText = [
+      "position:absolute",
+      `left:${x}px`,
+      `top:${y}px`,
+      `width:${w}px`,
+      `height:${h}px`,
+      `background:hsl(${hue},80%,60%)`,
+      `border-radius:${Math.random() > 0.5 ? "2px" : "0"}`,
+      "will-change:transform",
+      "pointer-events:none",
+    ].join(";");
+
+    p.animate(
+      [
+        { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+        {
+          transform: `translate(${vx * 0.6}px,${vy * 0.6}px) rotate(${rotation * 0.5}deg)`,
+          opacity: 0.8,
+        },
+        {
+          transform: `translate(${vx}px,${vy + 60}px) rotate(${rotation}deg)`,
+          opacity: 0,
+        },
+      ],
+      {
+        duration: 600 + Math.random() * 500,
+        easing: "cubic-bezier(0.2,0.6,0.4,1)",
+        fill: "forwards",
+      }
+    ).onfinish = () => p.remove();
+
+    container.appendChild(p);
+  }
+}
+
+function onPointer(e, container) {
+  const rect = container.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  triggerBurst(container, x, y);
+}
 
 export function start(container, config) {
   injectCSS();
@@ -53,7 +108,7 @@ export function start(container, config) {
       `border-radius: ${Math.random() > 0.5 ? "2px" : "0"}`,
       `animation-delay: ${Math.random() * 2}s`,
       `animation-duration: ${3 + Math.random() * 3}s`,
-      `opacity: ${0.5 + Math.random() * 0.1}`,
+      `opacity: ${0.85 + Math.random() * 0.15}`,
     ].join(";");
 
     fragment.appendChild(particle);
@@ -65,5 +120,6 @@ export function start(container, config) {
     cleanup: () => {
       container.replaceChildren();
     },
+    onPointer,
   };
 }
