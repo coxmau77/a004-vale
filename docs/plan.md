@@ -15,23 +15,23 @@ Rama única: `main`
 
 ---
 
-## Hito 1: Arquitectura Base e Inyección Cromática
+## Hito 1 (Redefinido): Arquitectura Base — Reproductor Inmediato
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
 | 1 | `chore: estructura inicial del proyecto` | `.gitignore`, carpetas del proyecto |
 | 2 | `feat: index.html con puntos de montaje` | `index.html` |
-| 3 | `feat: styles.css con design tokens oklch y layout base` | `css/styles.css` |
+| 3 | `feat: design tokens y layout responsive max-width 720px` | `css/styles.css` |
 | 4 | `feat: appConfig con estructura de datos` | `src/core/config.js` |
-| 5 | `upload: assets placeholder para desarrollo` | `assets/img/`, `assets/video/`, `assets/audio/` |
-| 6 | `feat: bootstrap de la aplicación` | `js/app.js` |
+| 5 | `upload: assets Istory` | `assets/img/` |
+| 6 | `feat: bootstrap del reproductor` | `js/app.js` |
+| 7 | `feat: transición crossfade entre slides` | `css/styles.css`, `src/core/state.js` |
 
 ## Hito 2: Máquina de Estados y Loop Infinito
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
-| 7 | `feat: máquina de estados del reproductor` | `src/core/state.js` |
-| 8 | `feat: splash dialog con fullscreen y desbloqueo` | `index.html`, `state.js` |
+| 8 | `feat: máquina de estados del reproductor` | `src/core/state.js` |
 | 9 | `feat: renderizado de slides imagen y video` | `js/app.js`, `state.js` |
 | 10 | `feat: barra de progreso fraccionada` | `src/ui/progress.js`, `css/styles.css` |
 | 11 | `feat: controles táctiles de navegación` | `src/ui/controls.js` |
@@ -61,11 +61,14 @@ Rama única: `main`
 ## Criterios de Aceptación por Hito
 
 ### Hito 1
-- La app carga y muestra una pantalla estática con el splash dialog y la paleta cromática correcta.
+- La app carga y muestra el primer slide inmediatamente.
+- Layout responsive centrado con `max-width: 720px`.
+- Navegación táctil (prev/next) funcional.
+- Transición suave (crossfade) entre slides sin parpadeos.
+- Loop infinito entre slides.
 
 ### Hito 2
 - Navegación completa cíclica entre slides sin interrupción.
-- Fullscreen y desbloqueo de audio funcionales.
 - Errores de red/medio no rompen el flujo.
 
 ### Hito 3
@@ -80,4 +83,4 @@ Rama única: `main`
 
 ---
 
-*Plan generado el 2026-07-02. Basado en `docs/spec.md`.*
+*Plan actualizado el 2026-07-02. Basado en `docs/spec.md`.*

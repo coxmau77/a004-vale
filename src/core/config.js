@@ -4,8 +4,6 @@ export const appConfig = {
     targetFps: 60,
     enableSwipe: true,
     baseColor: "oklch(55% 0.22 260)",
-    ambientAudioEnabled: true,
-    ambientToVideoAudioRatio: 0.4,
   },
   content: [
     {

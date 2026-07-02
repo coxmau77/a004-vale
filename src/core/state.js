@@ -7,6 +7,7 @@ export class PlayerState {
     this.config = appConfig;
     this.currentIndex = 0;
     this.timer = null;
+    this.transitionTimer = null;
     this.mediaContainer = document.getElementById("media-container");
     this.currentElement = null;
   }
@@ -28,22 +29,68 @@ export class PlayerState {
   }
 
   render(index) {
-    this.destroy();
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    if (this.transitionTimer) {
+      clearTimeout(this.transitionTimer);
+      this.transitionTimer = null;
+    }
+
+    const oldElement = this.currentElement;
+
+    for (const el of this.mediaContainer.children) {
+      if (el !== oldElement) {
+        el.remove();
+      }
+    }
+
+    if (oldElement) {
+      oldElement.onerror = null;
+      oldElement.onabort = null;
+      oldElement.onended = null;
+      oldElement.style.opacity = "0";
+    }
+
     this.currentIndex = index;
     const slide = this.config.content[this.currentIndex];
-    this.mediaContainer.innerHTML = "";
 
+    let newElement;
     if (slide.type === "image") {
-      this.renderImage(slide);
-    } else if (slide.type === "video") {
-      this.renderVideo(slide);
+      newElement = this.createImage(slide);
+    } else {
+      newElement = this.createVideo(slide);
     }
+
+    newElement.style.opacity = "0";
+    this.mediaContainer.appendChild(newElement);
+    this.currentElement = newElement;
+
+    getComputedStyle(newElement).opacity;
+    newElement.style.opacity = "1";
+
+    this.transitionTimer = setTimeout(() => {
+      if (oldElement && oldElement.parentNode) {
+        oldElement.remove();
+      }
+      this.transitionTimer = null;
+    }, 500);
 
     updateProgress(this.currentIndex);
     this.preloadNext();
+
+    if (slide.type === "image") {
+      this.timer = setTimeout(
+        () => this.next(),
+        this.config.settings.slideDuration
+      );
+    } else {
+      newElement.play().catch(() => this.next());
+    }
   }
 
-  renderImage(slide) {
+  createImage(slide) {
     const img = document.createElement("img");
     img.src = slide.src;
     img.alt = slide.alt;
@@ -59,16 +106,10 @@ export class PlayerState {
       this.mediaContainer.appendChild(fallback);
     };
 
-    this.mediaContainer.appendChild(img);
-    this.currentElement = img;
-
-    this.timer = setTimeout(
-      () => this.next(),
-      this.config.settings.slideDuration
-    );
+    return img;
   }
 
-  renderVideo(slide) {
+  createVideo(slide) {
     const video = document.createElement("video");
     video.src = slide.src;
     video.poster = slide.poster || "";
@@ -85,10 +126,7 @@ export class PlayerState {
     video.onabort = () => this.next();
     video.onended = () => this.next();
 
-    this.mediaContainer.appendChild(video);
-    this.currentElement = video;
-
-    video.play().catch(() => this.next());
+    return video;
   }
 
   next() {
@@ -116,6 +154,10 @@ export class PlayerState {
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
+    }
+    if (this.transitionTimer) {
+      clearTimeout(this.transitionTimer);
+      this.transitionTimer = null;
     }
     if (this.currentElement) {
       this.currentElement.onerror = null;
