@@ -6,6 +6,11 @@ function injectCSS() {
   const style = document.createElement("style");
   style.setAttribute("data-effect-css", CSS_ID);
   style.textContent = `
+    /* ─── Gota de lluvia ───
+       width: 2px          → ancho de la gota
+       height: 15px        → largo de la gota
+       rgba(180,210,255,.5) → color de la gota (azul claro)
+                                    */
     .rain-particle {
       position: absolute;
       top: -15px;
@@ -37,10 +42,10 @@ export function start(container, config) {
   for (let i = 0; i < count; i++) {
     const drop = document.createElement("div");
     drop.className = "rain-particle";
-    drop.style.left = `${random(0, 100)}%`;
-    drop.style.animationDelay = `${random(0, 3)}s`;
-    drop.style.animationDuration = `${random(0.4, 1.0)}s`;
-    drop.style.opacity = `${random(0.3, 0.7)}`;
+    drop.style.left = `${random(0, 100)}%`;           // ← Posición horizontal aleatoria (0-100%)
+    drop.style.animationDelay = `${random(0, 3)}s`;   // ← (s) Retardo antes de empezar a caer
+    drop.style.animationDuration = `${random(0.4, 1.0)}s`; // ← (s) Velocidad de caída (menor = más rápido)
+    drop.style.opacity = `${random(0.3, 0.7)}`;       // ← Opacidad de cada gota (0-1)
     fragment.appendChild(drop);
   }
 

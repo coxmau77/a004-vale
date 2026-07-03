@@ -91,14 +91,14 @@ export class PlayerState {
           toRemove.remove();
         }
         this.transitionTimer = null;
-      }, 500);
+      }, 1500); // ← (ms) Duración del crossfade entre slides — debe coincidir con transition: opacity en CSS
 
       updateProgress(this.currentIndex);
       this.preloadNext();
 
       this.timer = setTimeout(
         () => this.next(),
-        this.config.settings.slideDuration
+        this.config.settings.slideDuration,
       );
     };
 
@@ -112,7 +112,7 @@ export class PlayerState {
           console.warn(`Error cargando imagen: ${slide.src}`);
           startTransition();
         },
-        { once: true }
+        { once: true },
       );
     }
   }
@@ -143,6 +143,7 @@ export class PlayerState {
 
   preloadNext() {
     for (let i = 1; i <= 2; i++) {
+      // ← Cantidad de slides siguientes a precargar en segundo plano
       const idx = (this.currentIndex + i) % this.config.content.length;
       const slide = this.config.content[idx];
       const img = new Image();

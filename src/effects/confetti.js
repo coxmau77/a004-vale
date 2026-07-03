@@ -2,6 +2,7 @@ const CSS_ID = "opencode-effects-confetti";
 
 // ─── Paleta de colores ───
 // 12 matices distribuidos en el círculo cromático para variedad visual.
+// ← Modifica o agrega ángulos hue (0-360) para cambiar los colores del confeti
 const hues = [0, 15, 30, 45, 60, 120, 180, 200, 240, 280, 300, 330];
 
 function injectCSS() {
@@ -35,17 +36,17 @@ function injectCSS() {
 
 // ─── Ráfaga al tocar la pantalla ───
 // Partículas que explotan desde el punto de click y caen con gravedad simulada.
-//   count:      cantidad de partículas por toque
-//   speed:      60-180px — distancia total del recorrido
-//   upwardBias: 80px — impulso inicial hacia arriba (efecto explosión)
-//   duration:   600-1100ms — vida de cada partícula antes de autodestruirse
+//   count:        ← cantidad de partículas por toque
+//   speed: 60-180 ← px — distancia total del recorrido
+//   upwardBias:80 ← px — impulso inicial hacia arriba (efecto explosión)
+//   duration:     ← 600-1100ms — vida de cada partícula antes de autodestruirse
 function triggerBurst(container, x, y) {
-  const count = 25;
+  const count = 25; // ← Partículas por cada toque
 
   for (let i = 0; i < count; i++) {
     const p = document.createElement("div");
 
-    // Tamaño aleatorio 4-8px
+    // Tamaño aleatorio 4-8px  ← Cambia estos valores para partículas más grandes/chicas
     const w = 4 + Math.random() * 4;
     const h = 4 + Math.random() * 4;
 
@@ -54,12 +55,12 @@ function triggerBurst(container, x, y) {
 
     // Dirección y velocidad (360°, con sesgo ascendente)
     const angle = Math.random() * Math.PI * 2;
-    const speed = 60 + Math.random() * 120;
+    const speed = 60 + Math.random() * 120;  // ← (px) Velocidad de la explosión
     const vx = Math.cos(angle) * speed;
-    const vy = Math.sin(angle) * speed - 80;
+    const vy = Math.sin(angle) * speed - 80;  // ← 80 = impulso hacia arriba (efecto explosión)
 
     // Rotación durante el vuelo
-    const rotation = Math.random() * 820 - 360;
+    const rotation = Math.random() * 820 - 360; // ← (deg) Rotación aleatoria al caer
 
     p.style.cssText = [
       "position:absolute",
@@ -122,8 +123,8 @@ export function start(container, config) {
     const particle = document.createElement("div");
     particle.className = "confetti-particle";
 
-    const w = 6 + Math.random() * 4;
-    const h = 6 + Math.random() * 4;
+    const w = 6 + Math.random() * 4;  // ← (px) Ancho de cada partícula de confeti
+    const h = 6 + Math.random() * 4;  // ← (px) Alto de cada partícula de confeti
     const hue = hues[Math.floor(Math.random() * hues.length)];
     const light = 50 + Math.random() * 20;
     const saturation = 70 + Math.random() * 20;
@@ -134,9 +135,9 @@ export function start(container, config) {
       `height: ${h}px`,
       `background: hsl(${hue}, ${saturation}%, ${light}%)`,
       `border-radius: ${Math.random() > 0.5 ? "2px" : "0"}`,
-      `animation-delay: ${Math.random() * 2}s`,
-      `animation-duration: ${3 + Math.random() * 4}s`,
-      `opacity: ${0.15 + Math.random() * 0.85}`,
+      `animation-delay: ${Math.random() * 2}s`,        // ← (s) Retardo antes de empezar a caer
+      `animation-duration: ${3 + Math.random() * 4}s`, // ← (s) Velocidad de caída (mayor = más lento)
+      `opacity: ${0.15 + Math.random() * 0.85}`,       // ← Opacidad de cada partícula (0-1)
     ].join(";");
 
     fragment.appendChild(particle);
