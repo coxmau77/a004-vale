@@ -5,19 +5,11 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const ASSETS_IMG = path.join(ROOT, "assets", "img");
-const ASSETS_VIDEO = path.join(ROOT, "assets", "video");
 const OUTPUT = path.join(ROOT, "src", "core", "content.js");
 
 const IMAGE_EXTS = new Set([
   ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".avif", ".bmp",
 ]);
-const VIDEO_EXTS = new Set([".mp4", ".webm", ".mov", ".avi", ".mkv"]);
-
-function getType(ext) {
-  if (IMAGE_EXTS.has(ext)) return "image";
-  if (VIDEO_EXTS.has(ext)) return "video";
-  return null;
-}
 
 function scanDir(dirPath, urlPrefix) {
   const results = [];
@@ -26,11 +18,10 @@ function scanDir(dirPath, urlPrefix) {
     for (const entry of entries) {
       if (!entry.isFile()) continue;
       const ext = path.extname(entry.name).toLowerCase();
-      const type = getType(ext);
-      if (!type) continue;
+      if (!IMAGE_EXTS.has(ext)) continue;
       const nameWithoutExt = path.basename(entry.name, ext);
       const src = encodeURI(urlPrefix + "/" + entry.name);
-      results.push({ name: nameWithoutExt, type, src, alt: nameWithoutExt });
+      results.push({ name: nameWithoutExt, type: "image", src, alt: nameWithoutExt });
     }
   } catch (e) {
     if (e.code !== "ENOENT") {
@@ -40,10 +31,7 @@ function scanDir(dirPath, urlPrefix) {
   return results;
 }
 
-const slides = [
-  ...scanDir(ASSETS_IMG, "./assets/img"),
-  ...scanDir(ASSETS_VIDEO, "./assets/video"),
-];
+const slides = scanDir(ASSETS_IMG, "./assets/img");
 
 slides.sort((a, b) => a.name.localeCompare(b.name, "es"));
 
@@ -52,7 +40,7 @@ code += "// Do not edit manually.\n\n";
 code += "export const content = [\n";
 
 slides.forEach((slide, i) => {
-  code += `  { id: ${i + 1}, type: "${slide.type}", src: "${slide.src}", alt: "${slide.alt}" },\n`;
+  code += `  { id: ${i + 1}, src: "${slide.src}", alt: "${slide.alt}" },\n`;
 });
 
 code += "];\n";

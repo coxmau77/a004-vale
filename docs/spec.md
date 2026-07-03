@@ -8,7 +8,7 @@
 
 #### 1.1 Objetivo del Producto
 
-**animame.ar** es un reproductor de historias en formato 9:16, client-side, mobile-first, que renderiza secuencias multimedia a partir de una configuración JSON hardcodeada. Utiliza APIs nativas del navegador para reproducción de medios, efectos visuales acelerados por GPU mediante CSS, y loop infinito de slides.
+**animame.ar** es un reproductor de historias en formato 9:16, client-side, mobile-first, que renderiza secuencias de imágenes a partir de una configuración JSON hardcodeada. Utiliza APIs nativas del navegador para efectos visuales acelerados por GPU mediante CSS, y loop infinito de slides.
 
 #### 1.2 Alcance Técnico
 
@@ -17,7 +17,7 @@
   - Motor de efectos visuales desacoplado (partículas nativas + física delegada a GPU mediante hojas de estilo dinámicas).
   - Layout responsive con `max-width: 720px` centrado, adaptable al viewport del dispositivo.
   - Loop infinito al alcanzar el último slide.
-  - Manejo de errores centralizado para fallos de red, medios y APIs.
+  - Manejo de errores centralizado para fallos de red y medios.
   - Precarga activa de recursos N+1 y lazy loading para recursos distantes.
   - Despliegue en Netlify.
 
@@ -30,6 +30,7 @@
   - Navegación por teclado.
   - Pantalla de splash o barrera de interacción inicial.
   - Fullscreen API.
+  - Reproducción de video o audio.
 
 ---
 
@@ -37,7 +38,7 @@
 
 Filosofía _Web Platform First_: 100% de las funcionalidades se construyen con APIs nativas estándar del navegador.
 
-- **Estructura:** HTML5 semántico puro (`<video>`, `<audio>`, `<template>`).
+- **Estructura:** HTML5 semántico puro (`<template>`).
 - **Estilos y Física Visual:** CSS moderno con Custom Properties, espacio de color `oklch()`, función `color-mix()`, `@keyframes`, y motor de composición acelerado por hardware (GPU). Unidades `dvh` para viewport dinámico.
 - **Lógica y Orquestación:** Vanilla JavaScript (ES Modules). Uso de `requestAnimationFrame` y `DocumentFragment`.
 - **Entorno:** Cualquier navegador que implemente nativamente HTML5, CSS moderno (oklch, color-mix, dvh) y ES Modules. Sin dependencia de versiones específicas de navegador.
@@ -54,13 +55,11 @@ export const appConfig = {
   settings: {
     slideDuration: 5000,
     targetFps: 60,
-    enableSwipe: true,
     baseColor: "oklch(55% 0.22 260)",
   },
   content: [
     {
       id: 1,
-      type: "image",
       src: "./assets/img/Istory%20-%201.jpg",
       alt: "Istory - 1",
     },
@@ -98,13 +97,10 @@ animame.ar/
 │   │   ├── confetti.js        # Confeti (lógica + inyección CSS vía injectCSS)
 │   │
 │   └── ui/                    # Componentes de interacción
-│       ├── progress.js        # Barra de progreso fraccionada
-│       └── controls.js        # Gestos táctiles y navegación
+│       └── progress.js        # Barra de progreso fraccionada
 │
 └── assets/
-    ├── img/                   # Imágenes y posters de video (WebP)
-    ├── video/                 # Clips de video (H.264/MP4)
-    └── audio/                 # Bucles de audio de efectos (MP3)
+    └── img/                   # Imágenes de slides
 ```
 
 ---
@@ -137,18 +133,13 @@ Carga de `appConfig`, lectura analítica del array `content`, y construcción di
 
 #### 6.2 Render State
 
-Evaluador condicional según `type` del slide:
+Inyección del nodo `<img>`, activación del motor de efectos, arranque de temporizador (`setTimeout`) sincronizado con la barra de progreso.
 
-- **`image`:** Inyección del nodo `<img>`, activación del motor de efectos, arranque de temporizador (`setTimeout`) sincronizado con la barra de progreso.
-- **`video`:** Suspensión del reloj global. Inyección de `<video>` con atributo `poster`. Captura del evento `ended` para avanzar al siguiente estado.
-
-La transición entre slides se realiza mediante crossfade: el elemento anterior permanece en el DOM mientras se desvanece (`opacity: 1 → 0`) y el nuevo elemento aparece (`opacity: 0 → 1`) simultáneamente, utilizando `transition: opacity 0.5s` delegado al compositor GPU. Tras completarse la transición (500ms), el elemento anterior se elimina del DOM. En navegación rápida (prev/next), los elementos obsoletos se limpian inmediatamente para evitar acumulación.
+La transición entre slides se realiza mediante crossfade: el elemento anterior permanece en el DOM mientras se desvanece (`opacity: 1 → 0`) y el nuevo elemento aparece (`opacity: 0 → 1`) simultáneamente, utilizando `transition: opacity 0.5s` delegado al compositor GPU. Tras completarse la transición (500ms), el elemento anterior se elimina del DOM.
 
 #### 6.3 Precarga Activa (Preloading)
 
-Durante el slide `N`, el motor instancia en segundo plano (`new Image()`) el recurso `N + 1` para resolver caché antes de su uso. Para recursos distantes (> N+1), se aplica lazy loading nativo:
-- `<img loading="lazy">`
-- `<video preload="none">` o `preload="metadata"`
+Durante el slide `N`, el motor instancia en segundo plano (`new Image()`) el recurso `N + 1` y `N + 2` para resolver caché antes de su uso.
 
 #### 6.4 Loop Infinito
 
@@ -215,7 +206,7 @@ Solo se permite animar `transform` y `opacity` dentro de `@keyframes`, evitando 
 
 #### 9.2 Eventos Táctiles
 
-Todos los touch listeners (`touchstart`, `touchmove`) se configuran con `{ passive: true }`.
+Todos los touch listeners se configuran con `{ passive: true }`.
 
 #### 9.3 FPS Configurable
 
@@ -225,8 +216,7 @@ El target de FPS se define en `appConfig.settings.targetFps` (valor por defecto:
 
 ### 10. LAZY LOADING Y ESTRATEGIA DE RED
 
-- **Precarga N+1:** Durante el slide N, se precarga en memoria el recurso N+1.
-- **Lazy loading nativo:** Recursos con índice > N+1 usan `loading="lazy"` en `<img>` y `preload="metadata"` en `<video>`.
+- **Precarga N+1 / N+2:** Durante el slide N, se precargan en memoria los recursos N+1 y N+2.
 - **Fallback de red:** Si la precarga de N+1 falla, el reproductor continúa con el slide actual sin precarga y reintenta en el siguiente ciclo.
 
 ---
@@ -238,13 +228,10 @@ Mecanismo centralizado, modular y escalable para garantizar que ningún fallo ex
 #### 11.1 Imagen
 - Evento `onerror` en `<img>`: insertar placeholder visual genérico, registrar error en consola, no interrumpir el flujo.
 
-#### 11.2 Video
-- Evento `onerror` o `onabort` en `<video>`: saltar al siguiente slide automáticamente.
-
-#### 11.3 appConfig Malformado
+#### 11.2 appConfig Malformado
 - Si `appConfig` no puede evaluarse o su estructura es inválida: renderizar pantalla de error estático con mensaje legible.
 
-#### 11.4 Efecto Inválido
+#### 11.3 Efecto Inválido
 - Si `effect.name` no existe en el motor: omitir el efecto, continuar con el slide.
 
 ---
@@ -252,7 +239,6 @@ Mecanismo centralizado, modular y escalable para garantizar que ningún fallo ex
 ### 12. ACCESIBILIDAD
 
 - `#app-container` implementa `aria-live="polite"` para notificar cambios de slide.
-- Controles táctiles invisibles (`#touch-prev`, `#touch-next`) incluyen `aria-label`.
 - El motor de efectos respeta `@media (prefers-reduced-motion: reduce)` reduciendo o anulando animaciones de partículas.
 
 La aplicación está diseñada exclusivamente para interacción táctil en dispositivos móviles. No se implementa navegación por teclado.
@@ -271,7 +257,7 @@ La aplicación está diseñada exclusivamente para interacción táctil en dispo
 
 1. **Cero dependencias:** Sin referencias a librerías externas JS o CSS.
 2. **Rendimiento:** Renderizado estable al target definido en `appConfig.settings.targetFps` en dispositivos móviles de gama media.
-3. **Manejo de errores:** Ningún fallo individual (imagen rota, video corrupto, API bloqueada) debe interrumpir la ejecución del reproductor.
+3. **Manejo de errores:** Ningún fallo individual (imagen rota, API bloqueada) debe interrumpir la ejecución del reproductor.
 
 ---
 
@@ -282,7 +268,7 @@ La aplicación está diseñada exclusivamente para interacción táctil en dispo
 - `index.html` con puntos de montaje.
 - `styles.css` con variables oklch, layout responsive (`max-width: 720px`, centrado).
 - Bootstrap de JavaScript y carga de `appConfig`.
-- Barra de progreso, controles táctiles, navegación cíclica.
+- Barra de progreso, navegación cíclica.
 - Transición crossfade entre slides (0.5s, GPU-accelerada).
 - **Criterio:** La app carga y muestra el primer slide inmediatamente, responsive, centrado a max 720px, con transiciones suaves entre slides sin parpadeos ni cortes.
 
@@ -294,12 +280,10 @@ La aplicación está diseñada exclusivamente para interacción táctil en dispo
 - Precarga N+1 y N+2 en memoria.
 - **Criterio:** Efectos visuales superpuestos sin degradación de FPS. Precarga funcional. Efecto inválido se omite sin error.
 
-#### Hito 3: Audio Dual y Afinación de Performance
-- Integración de Web Audio API con bucles ambientales (requiere interacción del usuario para activación).
-- Reducción de volumen ambiental durante reproducción de video.
+#### Hito 3: Performance
 - Sistema de FPS configurable y monitoreo básico.
 - Soporte para `prefers-reduced-motion`.
-- **Criterio:** Audio ambiental sincronizado con efectos, reducción automática al 40% durante video con audio.
+- **Criterio:** Respeto por `prefers-reduced-motion`.
 
 ---
 

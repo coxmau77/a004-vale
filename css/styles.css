@@ -8,7 +8,7 @@
 
 :root {
   /* --brand-color: oklch(0.61 0.22 1.81); */
-  --brand-color: oklch(52.023% 0.24807 295.946);
+  --brand-color: oklch(81.297% 0.17161 161.06);
   --bg-dark: color-mix(in oklch, var(--brand-color) 10%, black);
   --text-light: color-mix(in oklch, var(--brand-color) 10%, white);
   --text-muted: color-mix(in oklch, var(--text-light) 60%, black);
@@ -82,8 +82,7 @@ body {
 
 /* --- Media --- */
 
-#media-container img,
-#media-container video {
+#media-container img {
   position: absolute;
   inset: 0;
   width: 100%;

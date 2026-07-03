@@ -32,29 +32,26 @@ Rama única: `main`
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
 | 8 | `feat: máquina de estados del reproductor` | `src/core/state.js` |
-| 9 | `feat: renderizado de slides imagen y video` | `js/app.js`, `state.js` |
+| 9 | `feat: renderizado de slides imagen` | `js/app.js`, `state.js` |
 | 10 | `feat: barra de progreso fraccionada` | `src/ui/progress.js`, `css/styles.css` |
-| 11 | `feat: controles táctiles de navegación` | `src/ui/controls.js` |
-| 12 | `feat: loop infinito al final del array` | `state.js` |
-| 13 | `feat: manejo centralizado de errores` | `state.js`, `css/styles.css` |
+| 11 | `feat: loop infinito al final del array` | `state.js` |
+| 12 | `feat: manejo centralizado de errores` | `state.js`, `css/styles.css` |
 
 ## ~~Hito 3: Motor de Efectos y Precarga~~ ✅
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
-| 14 | ~~`feat: motor de efectos genérico`~~ | ~~`src/effects/index.js`~~ |
-| 15 | ~~`feat: efecto de lluvia`~~ | ~~`src/effects/rain.js`~~ |
-| 16 | ~~`feat: efecto de confeti`~~ | ~~`src/effects/confetti.js`~~ |
-| 17 | ~~`feat: precarga N+1 y lazy loading`~~ | ~~`state.js`~~ |
+| 13 | ~~`feat: motor de efectos genérico`~~ | ~~`src/effects/index.js`~~ |
+| 14 | ~~`feat: efecto de lluvia`~~ | ~~`src/effects/rain.js`~~ |
+| 15 | ~~`feat: efecto de confeti`~~ | ~~`src/effects/confetti.js`~~ |
+| 16 | ~~`feat: precarga N+1 y lazy loading`~~ | ~~`state.js`~~ |
 
-## Hito 4: Audio, Performance y reduced-motion
+## Hito 4: Performance y reduced-motion
 
 | # | Commit | Archivos involucrados |
 |---|--------|----------------------|
-| 18 | `feat: AudioContext global y bucles ambientales` | `src/core/audio.js` |
-| 19 | `feat: audio dual con reducción de volumen` | `src/core/audio.js` |
-| 20 | `feat: FPS configurable y monitoreo` | `js/app.js` |
-| 21 | `feat: respeto por prefers-reduced-motion` | `css/styles.css`, efectos |
+| 17 | `feat: FPS configurable y monitoreo` | `js/app.js` |
+| 18 | `feat: respeto por prefers-reduced-motion` | `css/styles.css`, efectos |
 
 ---
 
@@ -77,8 +74,6 @@ Rama única: `main`
 - Efecto inválido se omite sin error.
 
 ### Hito 4
-- Audio ambiental sincronizado con efectos.
-- Reducción automática al 40% durante video con audio.
 - Respeto por `prefers-reduced-motion`.
 
 ---

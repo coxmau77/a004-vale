@@ -58,13 +58,7 @@ export class PlayerState {
 
     this.currentIndex = index;
     const slide = this.config.content[this.currentIndex];
-
-    let newElement;
-    if (slide.type === "image") {
-      newElement = this.createImage(slide);
-    } else {
-      newElement = this.createVideo(slide);
-    }
+    const newElement = this.createImage(slide);
 
     newElement.style.opacity = "0";
     this.mediaContainer.appendChild(newElement);
@@ -102,19 +96,15 @@ export class PlayerState {
       updateProgress(this.currentIndex);
       this.preloadNext();
 
-      if (slide.type === "image") {
-        this.timer = setTimeout(
-          () => this.next(),
-          this.config.settings.slideDuration
-        );
-      } else {
-        newElement.play().catch(() => this.next());
-      }
+      this.timer = setTimeout(
+        () => this.next(),
+        this.config.settings.slideDuration
+      );
     };
 
-    if (slide.type === "image" && newElement.complete) {
+    if (newElement.complete) {
       startTransition();
-    } else if (slide.type === "image") {
+    } else {
       newElement.addEventListener("load", startTransition, { once: true });
       newElement.addEventListener(
         "error",
@@ -124,8 +114,6 @@ export class PlayerState {
         },
         { once: true }
       );
-    } else {
-      startTransition();
     }
   }
 
@@ -148,26 +136,6 @@ export class PlayerState {
     return img;
   }
 
-  createVideo(slide) {
-    const video = document.createElement("video");
-    video.src = slide.src;
-    video.poster = slide.poster || "";
-    video.preload = "metadata";
-    video.playsInline = true;
-    video.muted = !slide.hasAudioTrack;
-    video.setAttribute("playsinline", "");
-
-    video.onerror = () => {
-      console.warn(`Error cargando video: ${slide.src}, saltando...`);
-      this.next();
-    };
-
-    video.onabort = () => this.next();
-    video.onended = () => this.next();
-
-    return video;
-  }
-
   next() {
     const nextIndex = (this.currentIndex + 1) % this.config.content.length;
     this.render(nextIndex);
@@ -177,10 +145,8 @@ export class PlayerState {
     for (let i = 1; i <= 2; i++) {
       const idx = (this.currentIndex + i) % this.config.content.length;
       const slide = this.config.content[idx];
-      if (slide.type === "image") {
-        const img = new Image();
-        img.src = slide.src;
-      }
+      const img = new Image();
+      img.src = slide.src;
     }
   }
 
@@ -195,8 +161,6 @@ export class PlayerState {
     }
     if (this.currentElement) {
       this.currentElement.onerror = null;
-      this.currentElement.onabort = null;
-      this.currentElement.onended = null;
       this.currentElement = null;
     }
     stopEffect();
