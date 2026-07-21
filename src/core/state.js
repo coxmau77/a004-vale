@@ -13,6 +13,10 @@ export class PlayerState {
     this.loader = document.getElementById("loader");
     this.currentElement = null;
     this.onScreenElement = null;
+    this.heartsBtn = document.getElementById("hearts-btn");
+    this.heartsProgress = document.getElementById("hearts-progress");
+    this.heartsActive = false;
+    this.heartsAnimating = false;
   }
 
   init() {
@@ -22,8 +26,11 @@ export class PlayerState {
     const app = document.getElementById("app-container");
     app.addEventListener("click", (e) => {
       if (e.target.closest("#progress-container")) return;
+      if (e.target.closest("#hearts-interaction")) return;
       handlePointer(e, this.effectsContainer);
     });
+
+    this.heartsBtn.addEventListener("click", () => this.toggleHearts());
   }
 
   buildProgressBar() {
@@ -149,6 +156,41 @@ export class PlayerState {
       const img = new Image();
       img.src = slide.src;
     }
+  }
+
+  toggleHearts() {
+    if (this.heartsAnimating) return;
+
+    if (this.heartsActive) {
+      stopEffect();
+      this.heartsActive = false;
+      this.heartsBtn.classList.remove("active");
+      this.heartsProgress.value = 0;
+      return;
+    }
+
+    this.heartsAnimating = true;
+    this.heartsProgress.value = 0;
+
+    const duration = 2000;
+    const start = performance.now();
+
+    const tick = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      this.heartsProgress.value = progress * 100;
+
+      if (progress < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        this.heartsAnimating = false;
+        this.heartsActive = true;
+        this.heartsBtn.classList.add("active");
+        startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
+      }
+    };
+
+    requestAnimationFrame(tick);
   }
 
   destroy() {

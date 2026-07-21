@@ -6,6 +6,6 @@ export const appConfig = {
     targetFps: 60, // ← FPS objetivo para monitoreo de rendimiento
     baseColor: "oklch(0.61 0.22 1.81)", // ← Color maestro — todos los colores derivados se generan desde este
   },
-  effect: { name: "hearts", intensity: 50 }, // ← nombre: "confetti" | "rain" | "hearts" | ""  |  intensity: 0-100
+  effect: { name: "", intensity: 50 }, // ← nombre: "confetti" | "rain" | "hearts" | ""  |  intensity: 0-100
   content,
 };
