@@ -175,6 +175,16 @@ export class PlayerState {
     const y = btnRect.top + btnRect.height / 2 - canvasRect.top;
     triggerBurst(this.effectsContainer, x, y);
 
+    this.heartsValue = Math.min(this.heartsValue + 10, 100);
+    this.heartsProgress.value = this.heartsValue;
+
+    if (this.heartsValue >= 100) {
+      this.heartsValue = 100;
+      this.heartsEffectOn = true;
+      startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
+      return;
+    }
+
     this.heartsFilling = true;
     this.heartsBtn.classList.add("active");
     if (!this.heartsRafId) {
