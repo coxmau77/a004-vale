@@ -34,3 +34,23 @@ export function stopEffect() {
   }
   pointerHandler = null;
 }
+
+export function stopEffectSmooth(container, duration = 500) {
+  if (!cleanup) return;
+
+  container.style.transition = `opacity ${duration}ms ease-out`;
+  container.style.opacity = "0";
+
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    container.removeEventListener("transitionend", finish);
+    container.style.transition = "";
+    container.style.opacity = "";
+    stopEffect();
+  };
+
+  container.addEventListener("transitionend", finish, { once: true });
+  setTimeout(finish, duration + 50);
+}

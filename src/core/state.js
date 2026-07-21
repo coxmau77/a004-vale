@@ -1,6 +1,7 @@
 import { appConfig } from "./config.js";
 import { updateProgress } from "../ui/progress.js";
-import { startEffect, stopEffect, handlePointer } from "../effects/index.js";
+import { startEffect, stopEffect, stopEffectSmooth, handlePointer } from "../effects/index.js";
+import { triggerBurst } from "../effects/hearts.js";
 
 export class PlayerState {
   constructor() {
@@ -15,8 +16,11 @@ export class PlayerState {
     this.onScreenElement = null;
     this.heartsBtn = document.getElementById("hearts-btn");
     this.heartsProgress = document.getElementById("hearts-progress");
-    this.heartsActive = false;
-    this.heartsAnimating = false;
+    this.heartsValue = 0;
+    this.heartsFilling = false;
+    this.heartsEffectOn = false;
+    this.heartsRafId = null;
+    this.heartsLastTs = null;
   }
 
   init() {
@@ -30,7 +34,10 @@ export class PlayerState {
       handlePointer(e, this.effectsContainer);
     });
 
-    this.heartsBtn.addEventListener("click", () => this.toggleHearts());
+    this.heartsBtn.addEventListener("pointerdown", (e) => this._heartsPointerDown(e));
+    this.heartsBtn.addEventListener("pointerup", () => this._heartsPointerUp());
+    this.heartsBtn.addEventListener("pointerleave", () => this._heartsPointerUp());
+    this.heartsBtn.addEventListener("pointercancel", () => this._heartsPointerUp());
   }
 
   buildProgressBar() {
@@ -158,39 +165,61 @@ export class PlayerState {
     }
   }
 
-  toggleHearts() {
-    if (this.heartsAnimating) return;
+  _heartsPointerDown(e) {
+    e.preventDefault();
+    if (this.heartsEffectOn || this.heartsFilling) return;
 
-    if (this.heartsActive) {
-      stopEffect();
-      this.heartsActive = false;
-      this.heartsBtn.classList.remove("active");
-      this.heartsProgress.value = 0;
+    const btnRect = this.heartsBtn.getBoundingClientRect();
+    const canvasRect = this.effectsContainer.getBoundingClientRect();
+    const x = btnRect.left + btnRect.width / 2 - canvasRect.left;
+    const y = btnRect.top + btnRect.height / 2 - canvasRect.top;
+    triggerBurst(this.effectsContainer, x, y);
+
+    this.heartsFilling = true;
+    this.heartsBtn.classList.add("active");
+    if (!this.heartsRafId) {
+      this.heartsLastTs = performance.now();
+      this.heartsRafId = requestAnimationFrame((ts) => this._heartsTick(ts));
+    }
+  }
+
+  _heartsPointerUp() {
+    this.heartsFilling = false;
+  }
+
+  _heartsTick(ts) {
+    const dt = (ts - this.heartsLastTs) / 1000;
+    this.heartsLastTs = ts;
+
+    if (this.heartsFilling) {
+      this.heartsValue += 55 * dt;
+      if (this.heartsValue >= 100) {
+        this.heartsValue = 100;
+        this.heartsEffectOn = true;
+        this.heartsFilling = false;
+        startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
+      }
+    } else if (this.heartsValue > 0) {
+      const drain = this.heartsEffectOn ? 3.33 : 40;
+      this.heartsValue -= drain * dt;
+      if (this.heartsValue <= 0) {
+        this.heartsValue = 0;
+        this.heartsRafId = null;
+        this.heartsProgress.value = 0;
+        if (this.heartsEffectOn) {
+          this.heartsEffectOn = false;
+          this.heartsBtn.classList.remove("active");
+          stopEffectSmooth(this.effectsContainer);
+        }
+        return;
+      }
+    } else {
+      this.heartsRafId = null;
       return;
     }
 
-    this.heartsAnimating = true;
-    this.heartsProgress.value = 0;
-
-    const duration = 2000;
-    const start = performance.now();
-
-    const tick = (now) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      this.heartsProgress.value = progress * 100;
-
-      if (progress < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        this.heartsAnimating = false;
-        this.heartsActive = true;
-        this.heartsBtn.classList.add("active");
-        startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
-      }
-    };
-
-    requestAnimationFrame(tick);
+    this.heartsProgress.value = this.heartsValue;
+    this.heartsRafId = requestAnimationFrame((t) => this._heartsTick(t));
   }
 
   destroy() {
@@ -201,6 +230,10 @@ export class PlayerState {
     if (this.transitionTimer) {
       clearTimeout(this.transitionTimer);
       this.transitionTimer = null;
+    }
+    if (this.heartsRafId) {
+      cancelAnimationFrame(this.heartsRafId);
+      this.heartsRafId = null;
     }
     if (this.currentElement) {
       this.currentElement.onerror = null;

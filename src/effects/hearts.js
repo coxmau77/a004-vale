@@ -108,7 +108,7 @@ function triggerFlash(container) {
   setTimeout(() => flash.remove(), FLASH_DURATION * 1000 + 50);
 }
 
-function triggerBurst(container, x, y) {
+export function triggerBurst(container, x, y) {
   triggerFlash(container);
 
   for (let i = 0; i < 20; i++) {
