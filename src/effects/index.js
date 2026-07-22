@@ -1,7 +1,8 @@
 import { start as rain } from "./rain.js";
 import { start as hearts } from "./hearts.js";
+import { start as confetti } from "./confetti.js";
 
-const registry = { rain, hearts };
+const registry = { rain, hearts, confetti };
 let cleanup = null;
 let pointerHandler = null;
 

@@ -1,7 +1,7 @@
 import { appConfig } from "./config.js";
 import { updateProgress } from "../ui/progress.js";
 import { startEffect, stopEffect, stopEffectSmooth, handlePointer } from "../effects/index.js";
-import { triggerBurst } from "../effects/hearts.js";
+import { triggerBurst } from "../effects/confetti.js";
 
 export class PlayerState {
   constructor() {
@@ -181,7 +181,7 @@ export class PlayerState {
     if (this.heartsValue >= 100) {
       this.heartsValue = 100;
       this.heartsEffectOn = true;
-      startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
+      startEffect(this.effectsContainer, { name: "confetti", intensity: 50 });
       return;
     }
 
@@ -207,7 +207,7 @@ export class PlayerState {
         this.heartsValue = 100;
         this.heartsEffectOn = true;
         this.heartsFilling = false;
-        startEffect(this.effectsContainer, { name: "hearts", intensity: 50 });
+        startEffect(this.effectsContainer, { name: "confetti", intensity: 50 });
       }
     } else if (this.heartsValue > 0) {
       const drain = this.heartsEffectOn ? 3.33 : 40;

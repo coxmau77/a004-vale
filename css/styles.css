@@ -7,7 +7,7 @@
 }
 
 :root {
-  --brand-color: oklch(83.771% 0.13074 168.367);
+  --brand-color: oklch(74.581% 0.11483 54.047);
   /* ← Color maestro — cambia este para generar nueva paleta */
   --bg-dark: color-mix(in oklch, var(--brand-color) 10%, black);
   --text-light: color-mix(in oklch, var(--brand-color) 10%, white);

@@ -2,12 +2,13 @@
 // Do not edit manually.
 
 export const content = [
-  { id: 1, src: "./assets/img/Istory%20-%201.jpg", alt: "Istory - 1" },
-  { id: 2, src: "./assets/img/Istory%20-%202.png", alt: "Istory - 2" },
-  { id: 3, src: "./assets/img/Istory%20-%203.png", alt: "Istory - 3" },
-  { id: 4, src: "./assets/img/Istory%20-%204.png", alt: "Istory - 4" },
-  { id: 5, src: "./assets/img/Istory%20-%205.png", alt: "Istory - 5" },
-  { id: 6, src: "./assets/img/Istory%20-%206.png", alt: "Istory - 6" },
-  { id: 7, src: "./assets/img/Istory%20-%207.png", alt: "Istory - 7" },
-  { id: 8, src: "./assets/img/Istory%20-%208.png", alt: "Istory - 8" },
+  { id: 1, src: "./assets/img/Story%20-%201.png", alt: "Story - 1" },
+  { id: 2, src: "./assets/img/Story%20-%202.png", alt: "Story - 2" },
+  { id: 3, src: "./assets/img/Story%20-%203.png", alt: "Story - 3" },
+  { id: 4, src: "./assets/img/Story%20-%204.png", alt: "Story - 4" },
+  { id: 5, src: "./assets/img/Story%20-%205.png", alt: "Story - 5" },
+  { id: 6, src: "./assets/img/Story%20-%206.png", alt: "Story - 6" },
+  { id: 7, src: "./assets/img/Story%20-%207.png", alt: "Story - 7" },
+  { id: 8, src: "./assets/img/Story%20-%208.png", alt: "Story - 8" },
+  { id: 9, src: "./assets/img/Story%20-%209.png", alt: "Story - 9" },
 ];

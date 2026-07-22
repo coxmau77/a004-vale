@@ -40,7 +40,7 @@ function injectCSS() {
 //   speed: 60-180 ← px — distancia total del recorrido
 //   upwardBias:80 ← px — impulso inicial hacia arriba (efecto explosión)
 //   duration:     ← 600-1100ms — vida de cada partícula antes de autodestruirse
-function triggerBurst(container, x, y) {
+export function triggerBurst(container, x, y) {
   const count = 25; // ← Partículas por cada toque
 
   for (let i = 0; i < count; i++) {
